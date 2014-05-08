@@ -9,14 +9,30 @@ namespace Word2PDF
         private static Application wordApp = new Application();
         private static Document doc;
 
-        private static const string ErrorMsgFileDoesNotExist = @"Selected file does not exist!";
+        private static string ErrorMsgFileDoesNotExist = @"Selected file does not exist!";
 
-        public static void ConvertToPDF(string sourceFile)
+        public static bool ConvertToPDF(string inputFile, string outputFile)
         {
-            if (!File.Exists(sourceFile))
+            bool success = false;
+            wordApp.Visible = false;
+
+            if (!File.Exists(inputFile))
             {
-                throw new Exception(ErrorMsgFileDoesNotExist));
+                throw new Exception(ErrorMsgFileDoesNotExist);
             }
+            else
+            {
+                doc = wordApp.Documents.Open(FileName: inputFile, Visible: false);
+                doc.SaveAs2(FileName: outputFile, FileFormat: WdSaveFormat.wdFormatPDF);
+                doc.Close();
+
+                if (File.Exists(outputFile))
+                {
+                    success = true;
+                }
+            }
+
+            return success;
         }
     }
 }
